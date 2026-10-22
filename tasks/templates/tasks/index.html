@@ -1,3 +1,4 @@
+{% load static %}
 <!doctype html>
 <html lang="en">
 <head>
@@ -6,6 +7,7 @@
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
     <title>Обробка зображень</title>
+    <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
 </head>
 <body>
     <h1>Сервіс обробки зображень</h1>
@@ -14,12 +16,33 @@
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="image_input">Оберіть зображення для обробки:</label><br><br>
-        <input type="file" name="image" id="image" accept="image/*" required><br><br>
-        <button type="submit">Почати обробку</button>
+        <input type="file" name="image" id="image_input" accept="image/*" required><br><br>
+        <button type="submit">Завантажити</button>
     </form>
 
-    <div class="progress-container">
-        <div id="progress-bar" class="progress-bar">0%</div>
-    </div>
+    {% if task %}
+        <hr>
+        <div id="task-container" data-task-id="{{ task.id }}" data-task-status="{{ task.status }}">
+            <h2>Остання задача #{{ task.id }}</h2>
+            <p>Статус: <strong id="task-status">{{ task.get_status_display }}</strong></p>
+
+            <div class="progress-container">
+                <div id="progress-bar" class="progress-bar" style="width: {{ task.progress }}%;">
+                    {{ task.progress }}%
+                </div>
+            </div>
+
+            <div id="result-container" style="display: {% if task.status == 'completed' %}block{% else %}none{% endif %};">
+                <h3>Оброблене зображення:</h3>
+                {% if task.processed_image %}
+                    <img id="result-image" src="{{ task.processed_image.url }}" class="result-image" alt="Оброблене фото">
+                {% else %}
+                    <img id="result-image" src="" class="result-image" alt="Оброблене фото">
+                {% endif %}
+            </div>
+        </div>
+
+        <script src="{% static 'tasks/main.js' %}"></script>
+    {% endif %}
 </body>
 </html>
