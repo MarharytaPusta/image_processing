@@ -1,4 +1,5 @@
 from django.db import models
+from django.contrib.auth.models import User
 
 
 class ImageTask(models.Model):
@@ -16,9 +17,11 @@ class ImageTask(models.Model):
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     progress = models.IntegerField(default=0)
 
-    uploaded_at = models.DateTimeField(auto_now_add=True)  # Фіксується один раз при створенні
-    last_updated_at = models.DateTimeField(auto_now=True)  # Оновлюється при кожній зміні відсотка
-    finished_at = models.DateTimeField(null=True, blank=True)  # Заповнимо вручну, коли задача завершиться
+    uploaded_at = models.DateTimeField(auto_now_add=True)
+    last_updated_at = models.DateTimeField(auto_now=True)
+    finished_at = models.DateTimeField(null=True, blank=True)
+
+    user = models.ForeignKey(User, on_delete=models.CASCADE, related_name='tasks')
 
     def __str__(self):
         return f"Task {self.id} - {self.get_status_display()} ({self.progress}%)"
