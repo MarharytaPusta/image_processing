@@ -6,21 +6,17 @@ from .process_image import start_background_processing
 
 @login_required
 def index(request):
-    latest_task = ImageTask.objects.filter(user=request.user).order_by('-id').first()
+    all_tasks = ImageTask.objects.filter(user=request.user).order_by('-id')
+    latest_task = all_tasks.first()
 
     if request.method == 'POST':
         uploaded_file = request.FILES.get('image')
         if uploaded_file:
-            task = ImageTask.objects.create(
-                user=request.user,
-                original_image=uploaded_file,
-                status='pending'
-            )
-            # Запускаємо твій цикл із затримкою у фоні
+            task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
             start_background_processing(task.id)
             return redirect('index')
 
-    return render(request, 'tasks/index.html', {'task': latest_task})
+    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks})
 
 @login_required
 def get_task_status(request, task_id):
