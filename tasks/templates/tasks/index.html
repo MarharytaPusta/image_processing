@@ -44,5 +44,42 @@
 
         <script src="{% static 'tasks/main.js' %}"></script>
     {% endif %}
+
+
+    {% if history_tasks %}
+        <hr>
+        <h2>Історія завдань</h2>
+        <table>
+            <thead>
+                <tr>
+                    <th>ID</th>
+                    <th>Створено</th>
+                    <th>Статус</th>
+                    <th>Прогрес</th>
+                    <th>Результат</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for h_task in history_tasks %}
+                <tr>
+                    <td>{{ h_task.id }}</td>
+                    <td>{{ h_task.uploaded_at|date:"d.m.Y H:i" }}</td>
+                    <td>{{ h_task.get_status_display }}</td>
+                    <td>{{ h_task.progress }}%</td>
+                    <td>
+                        {% if h_task.status == 'completed' and h_task.processed_image %}
+                            <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
+                        {% elif h_task.status == 'failed' %}
+                            <span>Помилка</span>
+                        {% else %}
+                            У процесі...
+                        {% endif %}
+                    </td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+    {% endif %}
+
 </body>
 </html>
