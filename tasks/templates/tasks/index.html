@@ -25,6 +25,14 @@
         <div id="task-container" data-task-id="{{ task.id }}" data-task-status="{{ task.status }}">
             <h2>Остання задача #{{ task.id }}</h2>
             <p>Статус: <strong id="task-status">{{ task.get_status_display }}</strong></p>
+            {% if task.status == 'pending' or task.status == 'processing' %}
+                <form id="cancel-form" method="post" action="{% url 'cancel_task' task.id %}" style="margin-bottom: 15px;">
+                    {% csrf_token %}
+                    <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                        Скасувати виконання
+                    </button>
+                </form>
+            {% endif %}
 
             <div class="progress-container">
                 <div id="progress-bar" class="progress-bar" style="width: {{ task.progress }}%;">

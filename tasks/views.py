@@ -1,4 +1,4 @@
-from django.shortcuts import render, redirect
+from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from .models import ImageTask
@@ -29,3 +29,13 @@ def get_task_status(request, task_id):
         })
     except ImageTask.DoesNotExist:
         return JsonResponse({'error': 'Task not found'}, status=404)
+
+
+@login_required
+def cancel_task(request, task_id):
+    if request.method == 'POST':
+        task = get_object_or_404(ImageTask, id=task_id, user=request.user)
+        if task.status in ['pending', 'processing']:
+            task.status = 'cancelled'
+            task.save(update_fields=['status'])
+    return redirect('index')
