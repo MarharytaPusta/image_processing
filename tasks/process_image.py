@@ -41,6 +41,11 @@ def process_image_task(task_id):
             current_progress = int((processed_count / total_pixels) * 100)
 
             if current_progress > last_reported_progress:
+                task.refresh_from_db()
+
+                if task.status == 'cancelled':
+                    return
+
                 task.progress = current_progress
                 task.save(update_fields=['progress', 'last_updated_at'])
                 last_reported_progress = current_progress

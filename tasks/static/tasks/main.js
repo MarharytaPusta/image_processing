@@ -1,6 +1,5 @@
 document.addEventListener('DOMContentLoaded', function() {
     const taskContainer = document.getElementById('task-container');
-
     if (!taskContainer) return;
 
     const taskId = taskContainer.dataset.taskId;
@@ -14,6 +13,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const statusText = document.getElementById('task-status');
                 const resultContainer = document.getElementById('result-container');
                 const resultImage = document.getElementById('result-image');
+
+                const cancelForm = document.getElementById('cancel-form');
 
                 progressBar.style.width = data.progress + '%';
                 progressBar.textContent = data.progress + '%';
@@ -33,9 +34,12 @@ document.addEventListener('DOMContentLoaded', function() {
                         resultImage.src = data.processed_image_url;
                         resultContainer.style.display = 'block';
                     }
+                    if (cancelForm) cancelForm.style.display = 'none';
                     clearInterval(pollingTimer);
-                } else if (currentStatus === 'failed' || currentStatus === 'cancelled') {
+                }
+                else if (currentStatus === 'failed' || currentStatus === 'cancelled') {
                     progressBar.style.backgroundColor = '#f44336';
+                    if (cancelForm) cancelForm.style.display = 'none';
                     clearInterval(pollingTimer);
                 }
             })
