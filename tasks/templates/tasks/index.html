@@ -13,6 +13,14 @@
     <h1>Сервіс обробки зображень</h1>
     <p>Ви увійшли як: <b>{{ user.username }}</b></p>
 
+    <div style="display: flex; justify-content: space-between; align-items: center;">
+        <p>Ви увійшли як: <b>{{ user.username }}</b></p>
+        <form method="post" action="{% url 'logout' %}">
+            {% csrf_token %}
+            <button type="submit">Вийти</button>
+        </form>
+    </div>
+
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
         <label for="image_input">Оберіть зображення для обробки:</label><br><br>
