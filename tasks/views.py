@@ -1,8 +1,11 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
+from django.contrib.auth.forms import UserCreationForm
+from django.contrib.auth import login
 from .models import ImageTask
 from .process_image import start_background_processing
+
 
 @login_required
 def index(request):
@@ -39,3 +42,16 @@ def cancel_task(request, task_id):
             task.status = 'cancelled'
             task.save(update_fields=['status'])
     return redirect('index')
+
+
+def register(request):
+    if request.method == 'POST':
+        form = UserCreationForm(request.POST)
+        if form.is_valid():
+            user = form.save()
+            login(request, user)
+            return redirect('index')
+    else:
+        form = UserCreationForm()
+
+    return render(request, 'tasks/register.html', {'form': form})
