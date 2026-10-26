@@ -20,7 +20,7 @@
         </form>
     </div>
 
-    <div id="error-container" style="background-color: #f44336; color: white; padding: 12px; margin-bottom: 20px; border-radius: 5px; font-weight: bold; display: {% if error_message %}block{% else %}none{% endif %};">
+    <div id="error-container" {% if error_message %}style="display: block;"{% endif %}>
         {{ error_message|default:"" }}
     </div>
 
@@ -39,9 +39,9 @@
             <h2>Остання задача #{{ task.id }}</h2>
             <p>Статус: <strong id="task-status">{{ task.get_status_display }}</strong></p>
             {% if task.status == 'pending' or task.status == 'processing' %}
-                <form id="cancel-form" method="post" action="{% url 'cancel_task' task.id %}" style="margin-bottom: 15px;">
+                <form id="cancel-form" method="post" action="{% url 'cancel_task' task.id %}">
                     {% csrf_token %}
-                    <button type="submit" style="background-color: #f44336; color: white; border: none; padding: 5px 10px; border-radius: 4px; cursor: pointer;">
+                    <button type="submit" class="btn-cancel">
                         Скасувати виконання
                     </button>
                 </form>
@@ -53,7 +53,7 @@
                 </div>
             </div>
 
-            <div id="result-container" style="display: {% if task.status == 'completed' %}block{% else %}none{% endif %};">
+            <div id="result-container" {% if task.status == 'completed' %}style="display: block;"{% endif %}>
                 <h3>Оброблене зображення:</h3>
                 {% if task.processed_image %}
                     <img id="result-image" src="{{ task.processed_image.url }}" class="result-image" alt="Оброблене фото">
