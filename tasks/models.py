@@ -11,8 +11,8 @@ class ImageTask(models.Model):
         ('cancelled', 'Скасовано'),
     )
 
-    original_image = models.ImageField(upload_to='images/originals/')
-    processed_image = models.ImageField(upload_to='images/processed/', null=True, blank=True)
+    original_image = models.ImageField(upload_to='images/originals/%Y/%m/%d/')
+    processed_image = models.ImageField(upload_to='images/processed/%Y/%m/%d/', null=True, blank=True)
 
     status = models.CharField(max_length=20, choices=STATUS_CHOICES, default='pending')
     progress = models.IntegerField(default=0)

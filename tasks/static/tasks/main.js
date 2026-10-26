@@ -51,3 +51,16 @@ document.addEventListener('DOMContentLoaded', function() {
         pollingTimer = setInterval(checkStatus, 1000);
     }
 });
+
+document.getElementById('image_input')?.addEventListener('change', function() {
+    const errBox = document.getElementById('error-container');
+    const maxBytes = 2 * 1024 * 1024; // 2 MB
+
+    if (this.files[0] && this.files[0].size > maxBytes) {
+        errBox.innerText = 'Відмова: Файл занадто великий! Максимум 2 МБ.';
+        errBox.style.display = 'block';
+        this.value = '';
+    } else {
+        errBox.style.display = 'none';
+    }
+});
