@@ -9,17 +9,30 @@ from .process_image import start_background_processing
 
 @login_required
 def index(request):
+    MAX_TASKS = 5
+    MAX_FILE_SIZE_MB = 2
+    error_message = None
+
     all_tasks = ImageTask.objects.filter(user=request.user).order_by('-id')
     latest_task = all_tasks.first()
 
     if request.method == 'POST':
         uploaded_file = request.FILES.get('image')
-        if uploaded_file:
+
+        all_tasks = list(all_tasks)
+
+        if len(all_tasks) >= MAX_TASKS:
+            error_message = f"Відмова: перевищено ліміт ({MAX_TASKS} задач)"
+
+        elif uploaded_file and uploaded_file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
+            error_message = f"Відмова: файл занадто великий. Максимальний розмір — {MAX_FILE_SIZE_MB} МБ."
+
+        elif uploaded_file:
             task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
             start_background_processing(task.id)
             return redirect('index')
 
-    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks})
+    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message})
 
 @login_required
 def get_task_status(request, task_id):
