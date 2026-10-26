@@ -5,12 +5,11 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from .models import ImageTask
 from .process_image import start_background_processing
+from django.conf import settings
 
 
 @login_required
 def index(request):
-    MAX_TASKS = 5
-    MAX_FILE_SIZE_MB = 2
     error_message = None
 
     all_tasks = ImageTask.objects.filter(user=request.user).order_by('-id')
@@ -21,11 +20,11 @@ def index(request):
 
         all_tasks = list(all_tasks)
 
-        if len(all_tasks) >= MAX_TASKS:
-            error_message = f"Відмова: перевищено ліміт ({MAX_TASKS} задач)"
+        if len(all_tasks) >= settings.MAX_TASKS:
+            error_message = f"Відмова: перевищено ліміт ({settings.MAX_TASKS} задач)"
 
-        elif uploaded_file and uploaded_file.size > MAX_FILE_SIZE_MB * 1024 * 1024:
-            error_message = f"Відмова: файл занадто великий. Максимальний розмір — {MAX_FILE_SIZE_MB} МБ."
+        elif uploaded_file and uploaded_file.size > settings.MAX_FILE_SIZE_MB * 1024 * 1024:
+            error_message = f"Відмова: файл занадто великий. Максимальний розмір — {settings.MAX_FILE_SIZE_MB} МБ."
 
         elif uploaded_file:
             task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
