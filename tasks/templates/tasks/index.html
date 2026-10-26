@@ -28,17 +28,7 @@
         {% csrf_token %}
         <label for="image_input">Оберіть зображення для обробки (максимум 2 МБ):</label><br><br>
 
-        <input type="file" name="image" id="image_input" accept="image/*" required
-               onchange="
-               const errBox = document.getElementById('error-container');
-               if(this.files[0].size > 2097152){
-                   errBox.innerText = 'Відмова: Файл занадто великий! Максимум 2 МБ.';
-                   errBox.style.display = 'block';
-                   this.value = '';
-               } else {
-                   errBox.style.display = 'none';
-               }">
-        <br><br>
+        <input type="file" name="image" id="image_input" accept="image/*"<br><br>
 
         <button type="submit">Завантажити</button>
     </form>
