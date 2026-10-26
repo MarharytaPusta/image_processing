@@ -20,7 +20,7 @@
                     <label for="{{ field.id_for_label }}">{{ field.label }}</label>
                     {{ field }}
                     {% if field.errors %}
-                        <div style="color: #f44336; font-size: 0.85em; margin-top: 5px;">
+                        <div class="error">
                             {{ field.errors.0 }}
                         </div>
                     {% endif %}
