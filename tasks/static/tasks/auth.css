@@ -61,6 +61,9 @@ body {
     font-size: 0.9em;
 }
 
-ul.errorlist {
-    display: none;
+
+.error {
+    color: #f44336;
+    font-size: 0.85em;
+    margin-top: 5px;"
 }
