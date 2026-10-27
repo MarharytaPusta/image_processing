@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+import os
 from .models import ImageTask
 from .process_image import start_background_processing
 from django.conf import settings
@@ -10,6 +11,7 @@ from django.conf import settings
 
 @login_required
 def index(request):
+    server_name = os.getenv('SERVER_NAME', 'Server')
     error_message = None
 
     all_tasks = ImageTask.objects.filter(user=request.user).order_by('-id')
@@ -31,7 +33,8 @@ def index(request):
             start_background_processing(task.id)
             return redirect('index')
 
-    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message})
+
+    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message, 'server_name': server_name})
 
 @login_required
 def get_task_status(request, task_id):
