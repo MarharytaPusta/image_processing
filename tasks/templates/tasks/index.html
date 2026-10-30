@@ -63,15 +63,13 @@
                 {% endif %}
             </div>
         </div>
-
-        <script src="{% static 'tasks/main.js' %}"></script>
     {% endif %}
 
 
     {% if history_tasks %}
         <hr>
         <h2>Історія завдань</h2>
-        <table>
+        <table id="tasks-table" data-update-url="{% url 'tasks_status_all' %}">
             <thead>
                 <tr>
                     <th>ID</th>
@@ -86,8 +84,8 @@
                 <tr>
                     <td>{{ h_task.id }}</td>
                     <td>{{ h_task.uploaded_at|date:"d.m.Y H:i" }}</td>
-                    <td>{{ h_task.get_status_display }}</td>
-                    <td>{{ h_task.progress }}%</td>
+                    <td id="status-task-{{ h_task.id }}">{{ h_task.get_status_display }}</td>
+                    <td id="progress-task-{{ h_task.id }}">{{ h_task.progress }}%</td>
                     <td>
                         {% if h_task.status == 'completed' and h_task.processed_image %}
                             <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
@@ -104,6 +102,7 @@
             </tbody>
         </table>
     {% endif %}
+    <script src="{% static 'tasks/main.js' %}"></script>
 
 </body>
 </html>

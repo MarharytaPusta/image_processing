@@ -50,6 +50,22 @@ def get_task_status(request, task_id):
 
 
 @login_required
+def get_all_tasks_status(request):
+    tasks = ImageTask.objects.filter(user=request.user)
+
+    tasks_data = []
+    for task in tasks:
+        tasks_data.append({
+            'id': task.id,
+            'status': task.status,
+            'progress': task.progress,
+            'processed_image_url': task.processed_image.url if task.processed_image else None
+        })
+
+    return JsonResponse({'tasks': tasks_data})
+
+
+@login_required
 def cancel_task(request, task_id):
     if request.method == 'POST':
         task = get_object_or_404(ImageTask, id=task_id, user=request.user)
