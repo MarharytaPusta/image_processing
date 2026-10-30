@@ -92,7 +92,9 @@
                         {% if h_task.status == 'completed' and h_task.processed_image %}
                             <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
                         {% elif h_task.status == 'failed' %}
-                            <span>Помилка</span>
+                            Помилка
+                        {% elif h_task.status == 'cancelled' %}
+                            Скасовано
                         {% else %}
                             У процесі...
                         {% endif %}
