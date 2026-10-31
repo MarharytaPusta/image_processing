@@ -22,7 +22,12 @@ def index(request):
 
         all_tasks = list(all_tasks)
 
-        if len(all_tasks) >= settings.MAX_TASKS:
+        success_tasks_count = ImageTask.objects.filter(
+            user=request.user,
+            status__in=['pending', 'processing', 'completed']
+        ).count()
+
+        if success_tasks_count >= settings.MAX_TASKS:
             error_message = f"Відмова: перевищено ліміт ({settings.MAX_TASKS} задач)"
 
         elif uploaded_file and uploaded_file.size > settings.MAX_FILE_SIZE_MB * 1024 * 1024:
