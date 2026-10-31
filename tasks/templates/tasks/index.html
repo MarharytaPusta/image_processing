@@ -86,7 +86,7 @@
                     <td>{{ h_task.uploaded_at|date:"d.m.Y H:i" }}</td>
                     <td id="status-task-{{ h_task.id }}">{{ h_task.get_status_display }}</td>
                     <td id="progress-task-{{ h_task.id }}">{{ h_task.progress }}%</td>
-                    <td>
+                    <td id="result-task-{{ h_task.id }}">
                         {% if h_task.status == 'completed' and h_task.processed_image %}
                             <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
                         {% elif h_task.status == 'failed' %}
