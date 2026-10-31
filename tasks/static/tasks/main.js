@@ -102,7 +102,7 @@ const taskContainer = document.getElementById('task-container');
 
 document.getElementById('image_input')?.addEventListener('change', function() {
     const errBox = document.getElementById('error-container');
-    const maxBytes = 2 * 1024 * 1024; // 2 MB (Виправлено множення)
+    const maxBytes = 2 * 1024 * 1024;
 
     if (this.files[0] && this.files[0].size > maxBytes) {
         errBox.innerText = 'Відмова: Файл занадто великий! Максимум 2 МБ.';
