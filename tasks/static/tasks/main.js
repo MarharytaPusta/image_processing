@@ -38,7 +38,6 @@ const taskContainer = document.getElementById('task-container');
                         clearInterval(singleTaskTimer);
                     }
                     else if (currentStatus === 'failed' || currentStatus === 'cancelled') {
-                        progressBar.style.backgroundColor = '#f44336';
                         if (cancelForm) cancelForm.style.display = 'none';
                         clearInterval(singleTaskTimer);
                     }
@@ -82,13 +81,8 @@ const taskContainer = document.getElementById('task-container');
                         const resultCell = document.getElementById(`result-task-${task.id}`);
                         if (resultCell && task.status === 'completed' && task.processed_image_url) {
                             if (!resultCell.querySelector('a')) {
-                                resultCell.innerHTML = `<a href="${task.processed_image_url}" download>Завантажити</a>`;
+                                resultCell.innerHTML = `<a href="${task.processed_image_url}">Відкрити фото</a>`;
                             }
-                        }
-
-                        const actionCell = document.getElementById(`action-task-${task.id}`);
-                        if (actionCell && task.status !== 'pending' && task.status !== 'processing') {
-                            actionCell.innerHTML = '-';
                         }
                     });
                 })
