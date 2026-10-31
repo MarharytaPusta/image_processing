@@ -81,7 +81,7 @@ const taskContainer = document.getElementById('task-container');
                         const resultCell = document.getElementById(`result-task-${task.id}`);
                         if (resultCell && task.status === 'completed' && task.processed_image_url) {
                             if (!resultCell.querySelector('a')) {
-                                resultCell.innerHTML = `<a href="${task.processed_image_url}" download>Завантажити</a>`;
+                                resultCell.innerHTML = `<a href="${task.processed_image_url}">Відкрити фото</a>`;
                             }
                         }
                     });
