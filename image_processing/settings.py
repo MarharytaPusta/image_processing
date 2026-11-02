@@ -109,3 +109,4 @@ LOGIN_URL = 'login'
 
 MAX_TASKS = 5
 MAX_FILE_SIZE_MB = 2
+ALLOWED_EXTENSIONS = ['.jpg', '.jpeg', '.png', '.webp']

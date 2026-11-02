@@ -3,6 +3,7 @@ from django.contrib.auth.decorators import login_required
 from django.http import JsonResponse
 from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
+from pathlib import Path
 import os
 from .models import ImageTask
 from .process_image import start_background_processing
@@ -32,6 +33,10 @@ def index(request):
 
         elif uploaded_file and uploaded_file.size > settings.MAX_FILE_SIZE_MB * 1024 * 1024:
             error_message = f"Відмова: файл занадто великий. Максимальний розмір — {settings.MAX_FILE_SIZE_MB} МБ."
+
+        suffixes = [s.lower() for s in Path(uploaded_file.name).suffixes]
+        if not suffixes or suffixes[-1] not in settings.ALLOWED_EXTENSIONS or len(suffixes) > 1:
+            error_message = f"Відмова: неприпустимий формат файлу. Дозволені: {', '.join(settings.ALLOWED_EXTENSIONS)}"
 
         elif uploaded_file:
             task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
