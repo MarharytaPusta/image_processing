@@ -44,7 +44,7 @@ def index(request):
             return redirect('index')
 
 
-    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message, 'server_name': server_name})
+    return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message, 'server_name': server_name, "max_file_size_mb" : settings.MAX_FILE_SIZE_MB,})
 
 @login_required
 def get_task_status(request, task_id):
