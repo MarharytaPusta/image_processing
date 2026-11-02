@@ -1,62 +1,104 @@
-.progress-container {
-    width: 300px;
-    background-color: #f3f3f3;
+body {
+    margin: 0;
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    text-align: center;
+}
+
+.user-header {
+    width: 80vw;
+    max-width: 450px;
+    margin: 1vh auto;
+}
+
+.user-header form {
+    border: none;
+    margin: 0;
+    padding: 0;
+}
+
+form, #task-container {
+    width: 80vw;
+    max-width: 450px;
+    background: #ffffff;
+    padding: 3vh 3vw;
+    margin: 1.5vh auto;
     border: 1px solid #ccc;
-    margin-top: 20px;
-    border-radius: 5px;
-    overflow: hidden;
+    border-radius: 1vw;
 }
-.progress-bar {
-    width: 0%;
-    height: 24px;
-    background-color: #4caf50;
-    text-align: center;
+
+#cancel-form {
+    margin: 0;
+    background: none;
+    border: none;
+    padding: 0;
+    width: auto;
+}
+
+button {
+    background-color: #2196F3;
     color: white;
-    line-height: 24px;
-    transition: width 0.3s ease-in-out;
-}
-.result-image {
-    margin-top: 20px;
-    max-width: 500px;
-    height: auto;
-    border-radius: 8px;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.15);
-    display: block;
+    padding: 1.2vh 2vw;
+    border: none;
+    border-radius: 0.5vw;
+    font-size: 1rem;
+    margin-top: 1vh;
 }
 
-table, th, td {
-  border: 1px solid;
-}
-
-table {
-    width : 50%;
-    text-align: center;
+.btn-cancel {
+    background-color: #f44336;
+    padding: 1vh 1.5vw;
+    font-size: 0.9rem;
 }
 
 #error-container {
     background-color: #f44336;
     color: white;
-    padding: 12px;
-    margin-bottom: 20px;
-    border-radius: 5px;
-    font-weight: bold;
+    padding: 1.5vh;
+    margin-bottom: 2vh;
+    border-radius: 0.5vw;
     display: none;
 }
 
-.btn-cancel {
-    background-color: #f44336;
+.progress-container {
+    width: 100%;
+    height: 3vh;
+    background-color: #f3f3f3;
+    border: 1px solid #ccc;
+    margin: 2vh auto;
+    border-radius: 0.5vw;
+}
+
+.progress-bar {
+    width: 0;
+    height: 100%;
+    background-color: #4caf50;
     color: white;
-    border: none;
-    padding: 5px 10px;
-    border-radius: 4px;
+    font-size: 0.8rem;
+    line-height: 3vh;
+    border-radius: 0.4vw;
 }
 
-
-#cancel-form {
-    margin-bottom: 15px;
+.result-image {
+    width: 60vw;
+    max-width: 300px;
+    margin: 2vh auto 0 auto;
 }
-
 
 #result-container {
     display: none;
+}
+
+table {
+    width: 90vw;
+    max-width: 600px;
+    margin: 2vh auto;
+    border-collapse: collapse;
+}
+
+th, td {
+    border: 1px solid #ccc;
+    padding: 1vh 1vw;
 }
