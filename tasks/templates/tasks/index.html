@@ -29,7 +29,7 @@
         {% csrf_token %}
         <label for="image_input">Оберіть зображення для обробки (максимум 2 МБ):</label><p></p>
 
-        <input type="file" name="image" id="image_input" accept="image/*"><p></p>
+        <input type="file" name="image" id="image_input" accept="image/jpeg, image/png, image/webp"><p></p>
 
         <button type="submit">Завантажити</button>
     </form>
