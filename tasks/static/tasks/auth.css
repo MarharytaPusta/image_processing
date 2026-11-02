@@ -9,9 +9,10 @@ body {
 
 .auth-card {
     background: white;
-    padding: 40px;
-    border-radius: 10px;
-    width: 100%;
+    padding: 4vh 3vw;
+    border: 1px solid #ccc;
+    border-radius: 1vw;
+    width: 80vw;
     max-width: 400px;
 }
 
@@ -19,16 +20,16 @@ body {
     text-align: center;
     color: #000000;
     margin-top: 0;
-    margin-bottom: 25px;
+    margin-bottom: 3vh;
 }
 
 .form-group {
-    margin-bottom: 15px;
+    margin-bottom: 2vh;
 }
 
 .form-group label {
     display: block;
-    margin-bottom: 5px;
+    margin-bottom: 0.8vh;
     color: #555;
     font-size: 0.9em;
     font-weight: 600;
@@ -36,9 +37,9 @@ body {
 
 .form-group input {
     width: 100%;
-    padding: 12px;
+    padding: 1.5vh 1vw;
     border: 1px solid #ccc;
-    border-radius: 6px;
+    border-radius: 0.6vw;
     box-sizing: border-box;
     font-size: 1em;
 }
@@ -47,17 +48,17 @@ body {
     width: 100%;
     background-color: #2196F3;
     color: white;
-    padding: 12px;
+    padding: 1.5vh 1vw;
     border: none;
-    border-radius: 6px;
+    border-radius: 0.6vw;
     font-size: 1em;
     font-weight: bold;
-    margin-top: 10px;
+    margin-top: 1.5vh;
 }
 
 .auth-links {
     text-align: center;
-    margin-top: 20px;
+    margin-top: 2.5vh;
     font-size: 0.9em;
 }
 
@@ -65,5 +66,5 @@ body {
 .error {
     color: #f44336;
     font-size: 0.85em;
-    margin-top: 5px;"
+    margin-top: 0.8vh;
 }
