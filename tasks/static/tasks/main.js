@@ -65,10 +65,10 @@ const taskContainer = document.getElementById('task-container');
 
                         const statusCell = document.getElementById(`status-task-${task.id}`);
                         if (statusCell) {
-                            if (task.status === 'completed') statusCell.innerHTML = '<span class="status-success">Завершено</span>';
-                            else if (task.status === 'cancelled') statusCell.innerHTML = '<span class="status-cancelled">Скасовано</span>';
-                            else if (task.status === 'failed') statusCell.innerHTML = '<span class="status-error">Помилка</span>';
-                            else statusCell.innerHTML = '<span class="status-pending">У процесі...</span>';
+                            if (task.status === 'completed') statusCell.innerText = 'Завершено';
+                            else if (task.status === 'cancelled') statusCell.innerText = 'Скасовано';
+                            else if (task.status === 'failed') statusCell.innerText = 'Помилка';
+                            else statusCell.innerText = 'У процесі...';
                         }
 
                         const progressCell = document.getElementById(`progress-task-${task.id}`);
