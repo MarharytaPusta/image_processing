@@ -27,9 +27,9 @@
 
     <form method="post" enctype="multipart/form-data">
         {% csrf_token %}
-        <label for="image_input">Оберіть зображення для обробки (максимум 2 МБ):</label><br><br>
+        <label for="image_input">Оберіть зображення для обробки (максимум 2 МБ):</label><p></p>
 
-        <input type="file" name="image" id="image_input" accept="image/*"<br><br>
+        <input type="file" name="image" id="image_input" accept="image/*"><p></p>
 
         <button type="submit">Завантажити</button>
     </form>
@@ -89,12 +89,8 @@
                     <td id="result-task-{{ h_task.id }}">
                         {% if h_task.status == 'completed' and h_task.processed_image %}
                             <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
-                        {% elif h_task.status == 'failed' %}
-                            Помилка
-                        {% elif h_task.status == 'cancelled' %}
-                            Скасовано
                         {% else %}
-                            У процесі...
+                            -
                         {% endif %}
                     </td>
                 </tr>
