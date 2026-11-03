@@ -13,6 +13,7 @@ services:
 
   web1:
     build: .
+    image: my_django_app
     env_file:
       - .env
     environment:
@@ -27,6 +28,7 @@ services:
 
   web2:
     build: .
+    image: my_django_app
     env_file:
       - .env
     environment:
