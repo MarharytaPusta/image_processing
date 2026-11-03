@@ -1,104 +1,111 @@
 {% load static %}
 <!doctype html>
-<html lang="uk">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport"
-          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
-    <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Обробка зображень</title>
-    <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
-</head>
-<body>
-    <h1>Сервіс обробки зображень</h1>
+    <html lang="uk">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport"
+              content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+        <meta http-equiv="X-UA-Compatible" content="ie=edge">
+        <title>Обробка зображень</title>
+        <link rel="stylesheet" href="{% static 'tasks/style.css' %}">
+    </head>
+    <body>
+        <h1>Сервіс обробки зображень</h1>
 
-    <div class="user-header">
-        <p>Ви увійшли як: <b>{{ user.username }}</b></p>
-        <p>{{ server_name }}</p>
-        <form method="post" action="{% url 'logout' %}">
+        <div class="user-header">
+            <p>Ви увійшли як: <b>{{ user.username }}</b></p>
+            <p>{{ server_name }}</p>
+            <form method="post" action="{% url 'logout' %}">
+                {% csrf_token %}
+                <button type="submit">Вийти</button>
+            </form>
+        </div>
+
+        <div id="error-container" {% if error_message %}style="display: block;"{% endif %}>
+            {{ error_message|default:"" }}
+        </div>
+
+        <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
-            <button type="submit">Вийти</button>
+            <label for="image_input">Оберіть зображення для обробки (максимум {{max_file_size_mb}} МБ):</label><p></p>
+
+            <input type="file" name="image" id="image_input" accept="image/jpeg, image/png, image/webp"><p></p>
+
+            <button type="submit">Завантажити</button>
         </form>
-    </div>
 
-    <div id="error-container" {% if error_message %}style="display: block;"{% endif %}>
-        {{ error_message|default:"" }}
-    </div>
+        {% if task %}
+            <hr>
+            <div id="task-container" data-task-id="{{ task.id }}" data-task-status="{{ task.status }}">
+                <h2>Остання задача #{{ task.id }}</h2>
+                <p>Статус: <strong id="task-status">{{ task.get_status_display }}</strong></p>
+                {% if task.status == 'pending' or task.status == 'processing' %}
+                    <form id="cancel-form" method="post" class="cancel-form" action="{% url 'cancel_task' task.id %}">
+                        {% csrf_token %}
+                        <button type="submit" class="btn-cancel">
+                            Скасувати виконання
+                        </button>
+                    </form>
+                {% endif %}
 
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <label for="image_input">Оберіть зображення для обробки (максимум {{max_file_size_mb}} МБ):</label><p></p>
+                <div class="progress-container">
+                    <div id="progress-bar" class="progress-bar" style="width: {{ task.progress }}%;">
+                        {{ task.progress }}%
+                    </div>
+                </div>
 
-        <input type="file" name="image" id="image_input" accept="image/jpeg, image/png, image/webp"><p></p>
-
-        <button type="submit">Завантажити</button>
-    </form>
-
-    {% if task %}
-        <hr>
-        <div id="task-container" data-task-id="{{ task.id }}" data-task-status="{{ task.status }}">
-            <h2>Остання задача #{{ task.id }}</h2>
-            <p>Статус: <strong id="task-status">{{ task.get_status_display }}</strong></p>
-            {% if task.status == 'pending' or task.status == 'processing' %}
-                <form id="cancel-form" method="post" action="{% url 'cancel_task' task.id %}">
-                    {% csrf_token %}
-                    <button type="submit" class="btn-cancel">
-                        Скасувати виконання
-                    </button>
-                </form>
-            {% endif %}
-
-            <div class="progress-container">
-                <div id="progress-bar" class="progress-bar" style="width: {{ task.progress }}%;">
-                    {{ task.progress }}%
+                <div id="result-container" {% if task.status == 'completed' %}style="display: block;"{% endif %}>
+                    <h3>Оброблене зображення:</h3>
+                    {% if task.processed_image %}
+                        <img id="result-image" src="{{ task.processed_image.url }}" class="result-image" alt="Оброблене фото">
+                    {% else %}
+                        <img id="result-image" src="" class="result-image" alt="Оброблене фото">
+                    {% endif %}
                 </div>
             </div>
-
-            <div id="result-container" {% if task.status == 'completed' %}style="display: block;"{% endif %}>
-                <h3>Оброблене зображення:</h3>
-                {% if task.processed_image %}
-                    <img id="result-image" src="{{ task.processed_image.url }}" class="result-image" alt="Оброблене фото">
-                {% else %}
-                    <img id="result-image" src="" class="result-image" alt="Оброблене фото">
-                {% endif %}
-            </div>
-        </div>
-    {% endif %}
+        {% endif %}
 
 
-    {% if history_tasks %}
-        <hr>
-        <h2>Історія завдань</h2>
-        <table id="tasks-table" data-update-url="{% url 'tasks_status_all' %}">
-            <thead>
-                <tr>
-                    <th>ID</th>
-                    <th>Створено</th>
-                    <th>Статус</th>
-                    <th>Прогрес</th>
-                    <th>Результат</th>
-                </tr>
-            </thead>
-            <tbody>
-                {% for h_task in history_tasks %}
-                <tr>
-                    <td>{{ h_task.id }}</td>
-                    <td>{{ h_task.uploaded_at|date:"d.m.Y H:i" }}</td>
-                    <td id="status-task-{{ h_task.id }}">{{ h_task.get_status_display }}</td>
-                    <td id="progress-task-{{ h_task.id }}">{{ h_task.progress }}%</td>
-                    <td id="result-task-{{ h_task.id }}">
-                        {% if h_task.status == 'completed' and h_task.processed_image %}
-                            <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
-                        {% else %}
-                            -
-                        {% endif %}
-                    </td>
-                </tr>
-                {% endfor %}
-            </tbody>
-        </table>
-    {% endif %}
-    <script src="{% static 'tasks/main.js' %}"></script>
+        {% if history_tasks %}
+            <hr>
+            <h2>Історія завдань</h2>
+            <table id="tasks-table" data-update-url="{% url 'tasks_status_all' %}">
+                <thead>
+                    <tr>
+                        <th>ID</th>
+                        <th>Створено</th>
+                        <th>Статус</th>
+                        <th>Прогрес</th>
+                        <th>Результат</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    {% for h_task in history_tasks %}
+                    <tr>
+                        <td>{{ h_task.id }}</td>
+                        <td>{{ h_task.uploaded_at|date:"d.m.Y H:i" }}</td>
+                        <td id="status-task-{{ h_task.id }}">{{ h_task.get_status_display }}</td>
+                        <td id="progress-task-{{ h_task.id }}">{{ h_task.progress }}%</td>
+                        <td id="result-task-{{ h_task.id }}">
+                            {% if h_task.status == 'completed' and h_task.processed_image %}
+                                <a href="{{ h_task.processed_image.url }}" target="_blank">Відкрити фото</a>
+                            {% elif h_task.status == 'failed' or h_task.status == 'cancelled' %}
+                                -
+                            {% else %}
+                                <form method="post" class="cancel-form" action="{% url 'cancel_task' h_task.id %}">
+                                    {% csrf_token %}
+                                    <button type="submit" class="btn-cancel">
+                                        Скасувати
+                                    </button>
+                                </form>
+                            {% endif %}
+                        </td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+        {% endif %}
+        <script src="{% static 'tasks/main.js' %}"></script>
 
-</body>
-</html>
+    </body>
+    </html>

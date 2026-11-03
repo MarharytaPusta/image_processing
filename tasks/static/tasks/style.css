@@ -29,7 +29,7 @@ form, #task-container {
     border-radius: 1vw;
 }
 
-#cancel-form {
+.cancel-form {
     margin: 0;
     background: none;
     border: none;
