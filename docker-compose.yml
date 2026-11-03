@@ -3,17 +3,43 @@ services:
     image: postgres:15-alpine
     env_file:
       - .env
-    environment:
-      POSTGRES_DB: ${DB_NAME}
-      POSTGRES_USER: ${DB_USER}
-      POSTGRES_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - "5432:5432"
     volumes:
       - postgres_data:/var/lib/postgresql/data
     restart: always
 
+  minio:
+    image: cgr.dev/chainguard/minio:latest
+    ports:
+      - "9000:9000"
+      - "9001:9001"
+    env_file:
+      - .env
+    command: server /data --console-address ":9001"
+    volumes:
+      - minio_data:/data
+
+  createbuckets:
+    image: cgr.dev/chainguard/minio-client:latest-dev
+    depends_on:
+      - minio
+    env_file:
+      - .env
+    entrypoint: >
+      /bin/sh -c "
+      sleep 5;
+      mc alias set myminio ${AWS_S3_ENDPOINT_URL} ${MINIO_ROOT_USER} ${MINIO_ROOT_PASSWORD};
+      mc mb myminio/${AWS_STORAGE_BUCKET_NAME};
+      mc anonymous set public myminio/${AWS_STORAGE_BUCKET_NAME};
+      exit 0;
+      "
   web1:
     build: .
-    image: my_django_app
+    command: >
+      sh -c "python manage.py collectstatic --noinput &&
+             python manage.py migrate &&
+             python manage.py runserver 0.0.0.0:8000"
     env_file:
       - .env
     environment:
@@ -21,14 +47,14 @@ services:
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
     depends_on:
       - db
+      - minio
     restart: always
 
   web2:
     build: .
-    image: my_django_app
+    command: python manage.py runserver 0.0.0.0:8000
     env_file:
       - .env
     environment:
@@ -36,7 +62,6 @@ services:
     volumes:
       - .:/app
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
     depends_on:
       - db
     restart: always
@@ -48,13 +73,13 @@ services:
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
       - static_volume:/app/staticfiles
-      - media_volume:/app/media
     depends_on:
       - web1
       - web2
+      - minio
     restart: always
 
 volumes:
   postgres_data:
   static_volume:
-  media_volume:
+  minio_data:

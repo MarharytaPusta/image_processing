@@ -11,7 +11,7 @@ SECRET_KEY = os.getenv('SECRET_KEY')
 
 DEBUG = True
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', '*']
+ALLOWED_HOSTS = ['localhost', '127.0.0.1', '0.0.0.0', '*']
 
 INSTALLED_APPS = [
     'django.contrib.admin',
@@ -64,6 +64,32 @@ DATABASES = {
     }
 }
 
+AWS_ACCESS_KEY_ID = os.getenv('MINIO_ROOT_USER')
+AWS_SECRET_ACCESS_KEY = os.getenv('MINIO_ROOT_PASSWORD')
+AWS_STORAGE_BUCKET_NAME = os.getenv('AWS_STORAGE_BUCKET_NAME')
+AWS_S3_ENDPOINT_URL = os.getenv('AWS_S3_ENDPOINT_URL')
+
+AWS_S3_FILE_OVERWRITE = False
+AWS_S3_SECURE_URLS = False
+AWS_S3_URL_PROTOCOL = 'http:'
+AWS_DEFAULT_ACL = 'public-read'
+AWS_S3_REGION_NAME = 'us-east-1'
+AWS_S3_SIGNATURE_VERSION = 's3v4'
+
+if AWS_S3_ENDPOINT_URL:
+    AWS_S3_CUSTOM_DOMAIN = f"127.0.0.1:9000/{AWS_STORAGE_BUCKET_NAME}"
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
+else:
+    MEDIA_URL = '/media/'
+    MEDIA_ROOT = os.path.join(BASE_DIR, 'media')
+
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -81,9 +107,9 @@ AUTH_PASSWORD_VALIDATORS = [
 ]
 
 
-LANGUAGE_CODE = 'uk'
+LANGUAGE_CODE = 'en-us'
 
-TIME_ZONE = 'Europe/Kyiv'
+TIME_ZONE = 'UTC'
 
 USE_I18N = True
 
@@ -91,6 +117,12 @@ USE_TZ = True
 
 
 STATIC_URL = 'static/'
+
+MAILERS = {
+    'default': {
+        'BACKEND': 'django.core.mail.backends.console.EmailBackend',
+    },
+}
 
 STATIC_URL = 'static/'
 STATIC_ROOT = BASE_DIR / 'staticfiles'
