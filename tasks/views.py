@@ -34,14 +34,15 @@ def index(request):
         elif uploaded_file and uploaded_file.size > settings.MAX_FILE_SIZE_MB * 1024 * 1024:
             error_message = f"Відмова: файл занадто великий. Максимальний розмір — {settings.MAX_FILE_SIZE_MB} МБ."
 
-        suffixes = [s.lower() for s in Path(uploaded_file.name).suffixes]
-        if not suffixes or suffixes[-1] not in settings.ALLOWED_EXTENSIONS or len(suffixes) > 1:
-            error_message = f"Відмова: неприпустимий формат файлу. Дозволені: {', '.join(settings.ALLOWED_EXTENSIONS)}"
+        else:
+            suffixes = [s.lower() for s in Path(uploaded_file.name).suffixes]
+            if not suffixes or suffixes[-1] not in settings.ALLOWED_EXTENSIONS or len(suffixes) > 1:
+                error_message = f"Відмова: неприпустимий формат файлу. Дозволені: {', '.join(settings.ALLOWED_EXTENSIONS)}"
 
-        elif uploaded_file:
-            task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
-            start_background_processing(task.id)
-            return redirect('index')
+            else:
+                task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
+                start_background_processing(task.id)
+                return redirect('index')
 
 
     return render(request, 'tasks/index.html', {'task': latest_task, 'history_tasks': all_tasks, 'error_message': error_message, 'server_name': server_name, "max_file_size_mb" : settings.MAX_FILE_SIZE_MB,})
