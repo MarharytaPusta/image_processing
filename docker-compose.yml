@@ -34,6 +34,7 @@ services:
       mc anonymous set public myminio/${AWS_STORAGE_BUCKET_NAME};
       exit 0;
       "
+
   web1:
     build: .
     command: >
@@ -64,6 +65,7 @@ services:
       - static_volume:/app/staticfiles
     depends_on:
       - db
+      - minio
     restart: always
 
   nginx:
