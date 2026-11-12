@@ -1,8 +1,12 @@
 import threading
 from io import BytesIO
 from PIL import Image
+import logging
 from django.core.files.base import ContentFile
 from .models import ImageTask
+
+
+logger = logging.getLogger('image_processing')
 
 
 def process_image_task(task_id):
@@ -63,9 +67,9 @@ def process_image_task(task_id):
         task.save()
 
     except Exception as e:
-        print(f"Помилка в задачі {task_id}: {e}")
         task.status = 'failed'
         task.save()
+        logger.error(f"Error in task {task_id}: {e}")
 
 
 def start_background_processing(task_id):
