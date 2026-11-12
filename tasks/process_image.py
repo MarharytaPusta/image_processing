@@ -11,7 +11,9 @@ def process_image_task(task_id):
         task.status = 'processing'
         task.save()
 
-        img = Image.open(task.original_image.path)
+        image_data = task.original_image.read()
+        img = Image.open(BytesIO(image_data))
+
         img = img.convert('RGB')
         width, height = img.size
 
@@ -61,6 +63,7 @@ def process_image_task(task_id):
         task.save()
 
     except Exception as e:
+        print(f"Помилка в задачі {task_id}: {e}")
         task.status = 'failed'
         task.save()
 

@@ -2,3 +2,5 @@ Django==5.0.4
 Pillow==10.3.0
 python-dotenv
 psycopg2-binary
+django-storages
+boto3
