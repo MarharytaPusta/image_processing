@@ -5,9 +5,14 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from pathlib import Path
 import os
+import logging
+
 from .models import ImageTask
 from .process_image import start_background_processing
 from django.conf import settings
+
+
+logger = logging.getLogger('image_processing')
 
 
 @login_required
@@ -19,6 +24,8 @@ def index(request):
     latest_task = all_tasks.first()
 
     if request.method == 'POST':
+        logger.info(f"User {request.user} attempts to process image.")
+
         uploaded_file = request.FILES.get('image')
 
         all_tasks = list(all_tasks)
@@ -30,14 +37,15 @@ def index(request):
 
         if success_tasks_count >= settings.MAX_TASKS:
             error_message = f"Відмова: перевищено ліміт ({settings.MAX_TASKS} задач)"
-
+            logger.warning(f"User {request.user} reached the task limit: {success_tasks_count}/{settings.MAX_TASKS}.")
         elif uploaded_file and uploaded_file.size > settings.MAX_FILE_SIZE_MB * 1024 * 1024:
             error_message = f"Відмова: файл занадто великий. Максимальний розмір — {settings.MAX_FILE_SIZE_MB} МБ."
-
+            logger.warning(f"User {request.user} tried to upload a file of {uploaded_file.size * 1024 * 1024} MB, which exceeds the limit of {settings.MAX_FILE_SIZE_MB} MB.")
         else:
             suffixes = [s.lower() for s in Path(uploaded_file.name).suffixes]
             if not suffixes or suffixes[-1] not in settings.ALLOWED_EXTENSIONS or len(suffixes) > 1:
                 error_message = f"Відмова: неприпустимий формат файлу. Дозволені: {', '.join(settings.ALLOWED_EXTENSIONS)}"
+                logger.warning(f"User {request.user} tried to upload a {suffixes} file, which is not {settings.ALLOWED_EXTENSIONS}")
 
             else:
                 task = ImageTask.objects.create(user=request.user, original_image=uploaded_file, status='pending')
@@ -79,6 +87,7 @@ def get_all_tasks_status(request):
 @login_required
 def cancel_task(request, task_id):
     if request.method == 'POST':
+        logger.info(f"User {request.user} attempts to cancel task {task_id}.")
         task = get_object_or_404(ImageTask, id=task_id, user=request.user)
         if task.status in ['pending', 'processing']:
             task.status = 'cancelled'
