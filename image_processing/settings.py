@@ -77,7 +77,7 @@ AWS_S3_REGION_NAME = 'us-east-1'
 AWS_S3_SIGNATURE_VERSION = 's3v4'
 
 if AWS_S3_ENDPOINT_URL:
-    AWS_S3_CUSTOM_DOMAIN = f"192.168.0.183:9000/{AWS_STORAGE_BUCKET_NAME}"
+    AWS_S3_CUSTOM_DOMAIN = f"172.16.199.149:9000/{AWS_STORAGE_BUCKET_NAME}"
     STORAGES = {
         "default": {
             "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
