@@ -5,7 +5,9 @@ from django.contrib.auth.forms import UserCreationForm
 from django.contrib.auth import login
 from pathlib import Path
 import os
+import time
 import logging
+import psutil
 
 from .models import ImageTask
 from .process_image import start_background_processing
@@ -106,3 +108,58 @@ def register(request):
         form = UserCreationForm()
 
     return render(request, 'tasks/register.html', {'form': form})
+
+
+def get_container_cpu_percent(interval: float = 0.2) -> float:
+    cpu_stat_path = "/sys/fs/cgroup/cpu.stat"
+    if not os.path.exists(cpu_stat_path):
+        return psutil.cpu_percent(interval=interval)
+
+    def read_usage_usec() -> int:
+        with open(cpu_stat_path, "r") as f:
+            for line in f:
+                if line.startswith("usage_usec"):
+                    return int(line.split()[1])
+        return 0
+
+    t1 = time.monotonic()
+    u1 = read_usage_usec()
+    time.sleep(interval)
+    t2 = time.monotonic()
+    u2 = read_usage_usec()
+
+    delta_usec = u2 - u1
+    elapsed_usec = (t2 - t1) * 1_000_000
+    if elapsed_usec <= 0:
+        return 0.0
+
+    cpu_percent = (delta_usec / elapsed_usec) * 100.0
+    return round(min(100.0, max(0.0, cpu_percent)), 1)
+
+
+def get_container_ram_percent() -> float:
+    mem_current_path = "/sys/fs/cgroup/memory.current"
+    mem_max_path = "/sys/fs/cgroup/memory.max"
+    if not os.path.exists(mem_current_path):
+        return psutil.virtual_memory().percent
+
+    with open(mem_current_path, "r") as f:
+        current_bytes = int(f.read().strip())
+
+    limit_bytes = 512 * 1024 * 1024
+    if os.path.exists(mem_max_path):
+        with open(mem_max_path, "r") as f:
+            raw_max = f.read().strip()
+            if raw_max.isdigit():
+                limit_bytes = int(raw_max)
+
+    ram_percent = (current_bytes / limit_bytes) * 100.0
+    return round(min(100.0, max(0.0, ram_percent)), 1)
+
+
+def server_metrics(request):
+    return JsonResponse({
+        "server": os.getenv("SERVER_NAME", "Unknown"),
+        "cpu": get_container_cpu_percent(interval=0.2),
+        "ram": get_container_ram_percent(),
+    })

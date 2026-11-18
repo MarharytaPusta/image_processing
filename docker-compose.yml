@@ -74,12 +74,25 @@ services:
       - "80:80"
     volumes:
       - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - ./nginx_dynamic:/etc/nginx/dynamic:ro
       - static_volume:/app/staticfiles
     depends_on:
       - web1
       - web2
       - minio
     restart: always
+
+  balancer_agent:
+      build: .
+      command: python balancer_agent.py
+      volumes:
+        - ./nginx_dynamic:/etc/nginx/dynamic
+        - /var/run/docker.sock:/var/run/docker.sock
+      depends_on:
+        - nginx
+        - web1
+        - web2
+      restart: always
 
 volumes:
   postgres_data:
